@@ -1,12 +1,41 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 import './CharPicker.css';
 
-class CharPicker extends Component {
-  state = { characters: [], isLoading: false };
+const CharPicker = props => {
+  // state = { characters: [], isLoading: false };
+  const [loadedChars, setLoadedChars] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    // use effect is specifically built to manage side effects
+    // will be run after every render cycle if no array of dependencies are passed
+    // with empty array [] - it's like componentDidMount
+    console.log('>>>it works');
+    async function fetchData() {
+      setIsLoading(true);
+      try {
+        const response = await axios.get(`https://swapi.co/api/people`);
+        const selectedCharacters = response.data.results.slice(0, 5);
+        const charDetailObj = selectedCharacters.map(({ name }, index) => {
+          return {
+            name,
+            id: index + 1,
+          };
+        });
+        setLoadedChars(charDetailObj);
+        setIsLoading(false);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchData();
+  }, []);
+
+  /*
   componentDidMount() {
-    this.setState({ isLoading: true });
+    setIsLoading(true);
     fetch('https://swapi.co/api/people')
       .then(response => {
         if (!response.ok) {
@@ -16,48 +45,39 @@ class CharPicker extends Component {
       })
       .then(charData => {
         const selectedCharacters = charData.results.slice(0, 5);
-        this.setState({
-          characters: selectedCharacters.map((char, index) => ({
+        setLoadedChars(selectedCharacters.map((char, index) => ({
             name: char.name,
             id: index + 1,
-          })),
-          isLoading: false,
-        });
-      })
+          })))
+          setIsLoading(false);
+        }
+        )
       .catch(err => {
         console.log(err);
       });
   }
+  */
 
-  render() {
-    let content = <p>Loading characters...</p>;
+  let content = <p>Loading characters...</p>;
 
-    if (
-      !this.state.isLoading &&
-      this.state.characters &&
-      this.state.characters.length > 0
-    ) {
-      content = (
-        <select
-          onChange={this.props.onCharSelect}
-          value={this.props.selectedChar}
-          className={this.props.side}
-        >
-          {this.state.characters.map(char => (
-            <option key={char.id} value={char.id}>
-              {char.name}
-            </option>
-          ))}
-        </select>
-      );
-    } else if (
-      !this.state.isLoading &&
-      (!this.state.characters || this.state.characters.length === 0)
-    ) {
-      content = <p>Could not fetch any data.</p>;
-    }
-    return content;
+  if (!isLoading && loadedChars && loadedChars.length > 0) {
+    content = (
+      <select
+        onChange={props.onCharSelect}
+        value={props.selectedChar}
+        className={props.side}
+      >
+        {loadedChars.map(char => (
+          <option key={char.id} value={char.id}>
+            {char.name}
+          </option>
+        ))}
+      </select>
+    );
+  } else if (!isLoading && (!loadedChars || loadedChars.length === 0)) {
+    content = <p>Could not fetch any data.</p>;
   }
-}
+  return content;
+};
 
 export default CharPicker;
