@@ -33,31 +33,6 @@ const CharPicker = props => {
     fetchData();
   }, []);
 
-  /*
-  componentDidMount() {
-    setIsLoading(true);
-    fetch('https://swapi.co/api/people')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch.');
-        }
-        return response.json();
-      })
-      .then(charData => {
-        const selectedCharacters = charData.results.slice(0, 5);
-        setLoadedChars(selectedCharacters.map((char, index) => ({
-            name: char.name,
-            id: index + 1,
-          })))
-          setIsLoading(false);
-        }
-        )
-      .catch(err => {
-        console.log(err);
-      });
-  }
-  */
-
   let content = <p>Loading characters...</p>;
 
   if (!isLoading && loadedChars && loadedChars.length > 0) {
