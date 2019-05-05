@@ -11,7 +11,7 @@ function useHttp(url, dependencies = []) {
   // but we can use useEffect in our custom hook
 
   useEffect(() => {
-    console.log('http useEffect running');
+    console.log(`http useEffect running query: ${url}`);
     setIsLoading(true);
     axios
       .get(url)

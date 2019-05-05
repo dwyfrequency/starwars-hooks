@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import useHttp from '../hooks/useHttp';
-import axios from 'axios';
 import Summary from './Summary';
 
 const Character = props => {
@@ -8,7 +7,6 @@ const Character = props => {
     `https://swapi.co/api/people/${props.selectedChar}`,
     [props.selectedChar]
   );
-  console.log(isLoading, fetchedData);
 
   const loadedCharacter = fetchedData
     ? {
@@ -22,10 +20,10 @@ const Character = props => {
         gender: fetchedData.gender,
         movieCount: fetchedData.films.length,
       }
-    : {};
+    : null;
 
   let content = <p>Loading Character...</p>;
-  if (!isLoading && loadedCharacter.id) {
+  if (!isLoading && loadedCharacter) {
     content = (
       <Summary
         name={loadedCharacter.name}
@@ -36,17 +34,9 @@ const Character = props => {
         movieCount={loadedCharacter.movieCount}
       />
     );
-  } else if (!isLoading && !loadedCharacter.id) {
+  } else if (!isLoading && !loadedCharacter) {
     content = <p>Failed to fetch character.</p>;
   }
-
-  useEffect(() => {
-    return () => {
-      console.log('Character component did unmount');
-    };
-  });
-
-  console.log('rendering character component');
 
   return content;
 };
